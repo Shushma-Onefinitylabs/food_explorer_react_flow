@@ -1,0 +1,96 @@
+/* Side Panel Container */
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 350px;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+    z-index: 999;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(0); /* Show panel */
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  /* Panel Header */
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  h2 {
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  .close-btn {
+    cursor: pointer;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  /* Meal Content */
+  .meal-content {
+    margin-top: 20px;
+  }
+  
+  .meal-image {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .tags {
+    margin-bottom: 15px;
+  }
+  
+  .tag {
+    display: inline-block;
+    background-color: #ff5722;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 12px;
+    margin-right: 5px;
+    font-size: 12px;
+  }
+  
+  .youtube-link {
+    display: inline-block;
+    color: #e62117;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  
+  .recipe-link {
+    display: inline-block;
+    color: #007bff;
+    margin-bottom: 10px;
+    text-decoration: none;
+  }
+  
+  .instructions-card {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-height: 100px; /* Fixed height */
+  overflow: hidden; /* Hide overflow */
+  margin-bottom: 16px;
+  }
+  
+  .instructions-card h3 {
+    margin-top: 0;
+  }
+
+  .instructions-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit the number of lines to 5 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
