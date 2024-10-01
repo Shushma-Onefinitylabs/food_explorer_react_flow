@@ -40,12 +40,15 @@ export const PipelineUI: React.FC = () => {
     },
   ];
 
+  const stack: any = []; 
+  stack.push(initialNodes);
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [lastClickedNode] = useState<{ id: string; x: number; y: number } | null>(null);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);
+  const [isClicked, setIsClicked] = useState(false);
 
   const onNodesChange: OnNodesChange = (changes) => {
     setNodes((nds) => applyNodeChanges(changes, nds));
@@ -87,6 +90,7 @@ export const PipelineUI: React.FC = () => {
     }));
 
     setNodes((prevNodes) => [...prevNodes, ...categoryNodes]);
+    stack.push(...categoryNodes);
     setEdges((prevEdges) => [...prevEdges, ...newEdges]);
   };
 
@@ -115,14 +119,62 @@ export const PipelineUI: React.FC = () => {
     };
 
     setNodes((prevNodes) => [...prevNodes, viewMealsNode]);
+    stack.push(viewMealsNode);
     setEdges((prevEdges) => [...prevEdges, newEdge]);
   };
+
 
   // Function to add or remove meal nodes
   const toggleMealNodes = async (node: string, baseX: number, baseY: number, sourceNodeId: string) => {
 
-    fetchMeals(node, baseX + 250, baseY, sourceNodeId, addMealNodes);
+    console.log(isClicked)
+    setIsClicked((prevClicked) => {
+      if (!prevClicked) {
+        
+        fetchMeals(node, baseX + 250, baseY, sourceNodeId, addMealNodes);
+        return true; // Set clicked state to true
+      } else {
+       
+        removeNodesAfter(`view-meals-${sourceNodeId}`); 
+        return false; // Reset clicked state
+      }
+    });
+  }
+
+  const removeNodesAfter = (clickedNodeId: string) => {
+    const clickedIndex = stack.findIndex((node: any) => node.id === clickedNodeId);
+
+    if (clickedIndex !== -1) {
+      const nodesToRemove = stack.slice(clickedIndex + 1);
+
+      // Check which edges should be removed based on the nodesToRemove
+      // Access the latest edges when setting the nodes to ensure consistency
+      setEdges((prevEdges) => {
+        const edgesToRemove = nodesToRemove.flatMap((node: any) => {
+          const filteredEdges = prevEdges.filter((edge: { id: string; source: string; target: string }) => {
+
+            const isSourceMatch = edge.source === clickedNodeId;
+            const isTargetMatch = edge.target === node.id;
+
+
+            return isSourceMatch || isTargetMatch;
+          });
+
+          return filteredEdges;
+        });
+
+        return prevEdges.filter((edge: { id: string }) => !edgesToRemove.some((e: { id: string }) => e.id === edge.id));
+      });
+
+      setNodes((prevNodes) =>
+        prevNodes.filter((node: { id: string }) => !nodesToRemove.some((n: { id: string }) => n.id === node.id))
+      );
+
+      // Update the stack to remove the nodes that were just removed
+      stack.splice(clickedIndex + 1);
+    }
   };
+
 
   const addMealNodes = (meals: any[], sourceNodeId: string, baseX: number, baseY: number) => {
     // Initialize cumulative height for positioning
@@ -141,7 +193,7 @@ export const PipelineUI: React.FC = () => {
       return {
         id: `meal-${meal.strMeal}-${sourceNodeId}`,
         type: 'customNode',
-        position: { x: baseX, y: currentY + (index - 2) * 70 }, // Use the calculated Y position
+        position: { x: baseX, y: currentY + (index - 2) * 70 }, 
         data: {
           label: meal.strMeal,
           icon: (
@@ -172,6 +224,7 @@ export const PipelineUI: React.FC = () => {
 
     // Add new meal nodes and edges
     setNodes((prevNodes) => [...prevNodes, ...mealNodes]);
+    stack.push(...mealNodes);
     setEdges((prevEdges) => [...prevEdges, ...mealEdges]);
   };
 
@@ -244,6 +297,9 @@ export const PipelineUI: React.FC = () => {
     };
 
     setNodes((prevNodes) => [...prevNodes, viewIngNode, viewTagsNode, viewDetailsNode]);
+    stack.push(viewIngNode);
+    stack.push(viewTagsNode);
+    stack.push(viewDetailsNode);
     setEdges((prevEdges) => [...prevEdges, newIngEdge, newTagsEdge, newDetailsEdge]);
   };
 
@@ -284,6 +340,7 @@ export const PipelineUI: React.FC = () => {
 
     // Update the nodes and edges state
     setNodes((prev) => [...prev, ...ingredientNodes]);
+    stack.push(...ingredientNodes);
     setEdges((prev) => [...prev, ...ingredientEdges]);
   };
 
