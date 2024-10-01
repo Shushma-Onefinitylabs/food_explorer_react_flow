@@ -42,7 +42,7 @@ export const PipelineUI: React.FC = () => {
 
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>([]);
-  const [lastClickedNode, setLastClickedNode] = useState<{ id: string; x: number; y: number } | null>(null);
+  const [lastClickedNode] = useState<{ id: string; x: number; y: number } | null>(null);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(null);

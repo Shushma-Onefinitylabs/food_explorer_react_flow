@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { FaTimes, FaUtensils, FaYoutube } from 'react-icons/fa';
+import React from 'react';
 import '../MealDetails.css'; // Import custom CSS
 
 // Dummy data for demonstration
